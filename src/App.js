@@ -1,98 +1,99 @@
-import React, { useState, useEffect } from 'react'
-import Header from './components/Header'
-import ImagenRandom from './components/ImagenRandom'
-import Menu from './components/Menu'
-import { nombreRaza, agregarMayuscula } from './helpers'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import Header from './components/Header';
+import RandomImage from './components/RandomImage';
+import Search from './components/Search';
+import FavList from './components/FavList';
+import { getRandomByBreed, getRandomImage } from './api';
+import { getBreedName } from './utils';
+import './App.css';
 
-function App() {
+const App = () => {
+  let initialFavouriteImages = JSON.parse(
+    localStorage.getItem('favouritesDogs')
+  );
+  if (!initialFavouriteImages) initialFavouriteImages = [];
 
-   // LocalStorage
-   let favoritasIniciales = JSON.parse(localStorage.getItem('favoritas'));
-   if (!favoritasIniciales) {
-      favoritasIniciales = [];
-   }
+  const [imageUrl, setImageUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [breedName, setBreedName] = useState('');
+  const [like, setLike] = useState(false);
+  const [favouriteImages, setFavouriteImages] = useState(
+    initialFavouriteImages
+  );
+  const [isSearch, setIsSearch] = useState(false);
 
-   const [imagen, guardarImagen] = useState('');
-   const [cargando, guardarCargando] = useState(false);
-   const [nombreraza, guardarNombreRaza] = useState('');
-   const [randomraza, guardarRandomRaza] = useState(false);
-   const [like, guardarLike] = useState(false);
-   const [favoritas, guardarFavoritas] = useState(favoritasIniciales);
-   const [busqueda, guardarBusqueda] = useState(false);
+  useEffect(() => {
+    localStorage.setItem(
+      'favouritesDogs',
+      JSON.stringify(initialFavouriteImages ? favouriteImages : [])
+    );
+  }, [initialFavouriteImages, favouriteImages]);
 
-   useEffect(() => {
-      if (favoritasIniciales) {
-         localStorage.setItem('favoritas', JSON.stringify(favoritas));
-      } else {
-         localStorage.setItem('favoritas', JSON.stringify([]));
-      }
-   }, [favoritasIniciales, favoritas]);
+  const getRandom = async (finalBreed = '') => {
+    setIsLoading(true);
+    try {
+      const randomImageUrl = !finalBreed
+        ? await getRandomImage()
+        : await getRandomByBreed(finalBreed);
+      setImageUrl(randomImageUrl);
+      setBreedName(!finalBreed ? getBreedName(randomImageUrl) : '');
+      setIsSearch(!!finalBreed);
+      setIsLoading(false);
+    } catch (error) {
+      console.log({ error });
+    }
+  };
 
-   useEffect(() => {
-      const consultarAPI = async () => {
-         if (imagen === '') {
-            const url = 'https://dog.ceo/api/breeds/image/random';
-            const respuesta = await fetch(url);
-            const resultado = await respuesta.json();
-            guardarImagen(resultado.message);
-            guardarNombreRaza(agregarMayuscula(nombreRaza(resultado.message)));
-         }
+  useEffect(() => {
+    getRandom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-         favoritas.forEach(favorita => {
-            (favorita.url === imagen) ? guardarLike(true) : guardarLike(false);
-         });
-      }
-      consultarAPI();
-   }, [imagen, favoritas]);
+  useEffect(() => {
+    if (!imageUrl) return;
+    favouriteImages.forEach(fav => setLike(fav.url === imageUrl));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageUrl]);
 
-   const eliminarFavorita = (id) => {
-      const favoritasRestantes = favoritas.filter(favorita => favorita.id !== id);
-      guardarFavoritas(favoritasRestantes);
-      guardarLike(false);
-   }
+  const removeFavouriteImage = id => {
+    const remainingFavourites = favouriteImages.filter(fav => fav.id !== id);
+    setFavouriteImages(remainingFavourites);
+    setLike(false);
+  };
 
-   return (
-      <div className="main">
-         <div className="container">
-            <div className="row">
-               <Header />
-            </div>
-            <div className="row">
-               <ImagenRandom
-                  imagen={imagen}
-                  guardarImagen={guardarImagen}
-                  cargando={cargando}
-                  guardarCargando={guardarCargando}
-                  nombreraza={nombreraza}
-                  randomraza={randomraza}
-                  guardarRandomRaza={guardarRandomRaza}
-                  like={like}
-                  guardarLike={guardarLike}
-                  favoritas={favoritas}
-                  guardarFavoritas={guardarFavoritas}
-                  guardarBusqueda={guardarBusqueda}
-               />
-            </div>
-            <div className="row">
-               <Menu
-                  guardarImagen={guardarImagen}
-                  cargando={cargando}
-                  guardarCargando={guardarCargando}
-                  guardarNombreRaza={guardarNombreRaza}
-                  guardarRandomRaza={guardarRandomRaza}
-                  favoritas={favoritas}
-                  eliminarFavorita={eliminarFavorita}
-                  busqueda={busqueda}
-                  guardarBusqueda={guardarBusqueda}
-               />
-            </div>
-            <div className="row mt-4 d-flex justify-content-center">
-               <p className="text-muted m-0">&copy; Desarrollado por Sebaavt95</p>
-            </div>
-         </div>
+  return (
+    <div className="main">
+      <div className="container">
+        <div className="row">
+          <Header />
+        </div>
+        <RandomImage
+          imageUrl={imageUrl}
+          getRandom={getRandom}
+          isLoading={isLoading}
+          breedName={breedName}
+          like={like}
+          setLike={setLike}
+          favouriteImages={favouriteImages}
+          setFavouriteImages={setFavouriteImages}
+        />
+        <Search
+          getRandom={getRandom}
+          isSearch={isSearch}
+          setIsSearch={setIsSearch}
+        />
+        <FavList
+          favouriteImagesList={favouriteImages}
+          removeFavouriteImage={removeFavouriteImage}
+        />
+        <div className="row mt-4 d-flex justify-content-center">
+          <p className="text-muted m-0">
+            &copy; Desarrollado por Sebaavt95 - {new Date().getFullYear()}
+          </p>
+        </div>
       </div>
-   );
-}
+    </div>
+  );
+};
 
 export default App;
