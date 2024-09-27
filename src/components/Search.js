@@ -108,6 +108,7 @@ const Search = ({ getRandom, isSearch, setIsSearch }) => {
 Search.propTypes = {
   getRandom: PropTypes.func,
   isSearch: PropTypes.bool,
+  setIsSearch: PropTypes.func,
 };
 
 export default Search;

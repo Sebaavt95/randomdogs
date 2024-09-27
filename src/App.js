@@ -5,7 +5,6 @@ import Search from './components/Search';
 import FavList from './components/FavList';
 import { getRandomByBreed, getRandomImage } from './api';
 import { getBreedName } from './utils';
-import './App.css';
 
 const App = () => {
   let initialFavouriteImages = JSON.parse(
