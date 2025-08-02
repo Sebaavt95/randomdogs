@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getBreedName, removeNumbers } from '../../../utils';
 import './styles.css';
 
-const ImagenFav = ({ favImage, removeFavouriteImage }) => {
+const FavImage = ({ favImage, removeFavorite }) => {
   const name = getBreedName(favImage.url);
   const idName = removeNumbers(favImage.id);
 
@@ -35,7 +35,7 @@ const ImagenFav = ({ favImage, removeFavouriteImage }) => {
                 type="button"
                 className="alert alert-secondary px-2 py-1 m-0"
                 data-dismiss="modal"
-                onClick={removeFavouriteImage}
+                onClick={removeFavorite}
               >
                 Eliminar favorita
               </button>
@@ -47,9 +47,9 @@ const ImagenFav = ({ favImage, removeFavouriteImage }) => {
   );
 };
 
-ImagenFav.propTypes = {
+FavImage.propTypes = {
   favImage: PropTypes.object,
   removeFavouriteImage: PropTypes.func,
 };
 
-export default ImagenFav;
+export default FavImage;

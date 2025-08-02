@@ -1,22 +1,17 @@
-import React, { useState } from 'react';
-
-const Select = ({ options, handleSetValue }) => {
-  const [selectedOption, setSelectedOption] = useState('');
-
+const Select = ({
+  options,
+  handleSetValue,
+  value = '',
+  placeholder = '- Seleccionar Raza -',
+}) => {
   const handleChange = e => {
-    const value = e.target.value;
-    setSelectedOption(value);
-    handleSetValue(value);
+    handleSetValue(e.target.value);
   };
 
   return (
     <div className="col-sm-12 col-md-3 mb-2">
-      <select
-        className="custom-select"
-        value={selectedOption}
-        onChange={handleChange}
-      >
-        <option value="">- Seleccionar Raza -</option>
+      <select className="custom-select" value={value} onChange={handleChange}>
+        <option value="">{placeholder}</option>
         {options.map((option, idx) => (
           <option key={`${option}-${idx.toString()}`} value={option}>
             {option}

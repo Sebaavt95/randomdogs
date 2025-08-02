@@ -10,9 +10,9 @@ export const getRandomImage = async () => {
   return randomImageUrl;
 };
 
-export const getRandomByBreed = async finalBreed => {
+export const getRandomByBreed = async fullBreed => {
   const { data } = await axios.get(
-    `${BASE_URL}/breed/${finalBreed}/images/random`
+    `${BASE_URL}/breed/${fullBreed}/images/random`
   );
   const { message: randomImageUrl, status } = data || {};
   if (status !== 'success') return '';

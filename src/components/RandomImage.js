@@ -1,34 +1,48 @@
-import React from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import shortid from 'shortid';
+import { useAppContext } from '../context/AppContext';
 import './RandomImage.css';
 import '../Spinner.css';
 
-const RandomImage = ({
-  imageUrl,
-  getRandom,
-  isLoading,
-  breedName,
-  like,
-  setLike,
-  favouriteImages,
-  setFavouriteImages,
-}) => {
-  const addToFavourites = () => {
-    const imageToAdd = favouriteImages.find(fav => fav.url === imageUrl);
-    setFavouriteImages(
-      !imageToAdd
-        ? [
-            ...favouriteImages,
-            {
-              id: shortid.generate(),
-              url: imageUrl,
-            },
-          ]
-        : favouriteImages.filter(fav => fav.url !== imageUrl)
-    );
-    setLike(!imageToAdd);
+const RandomImage = () => {
+  const {
+    imageUrl,
+    getRandom,
+    isLoading,
+    breedName,
+    addToFavorites,
+    isFavorite,
+    error,
+  } = useAppContext();
+
+  const isImageFavorite = isFavorite(imageUrl);
+
+  console.log({ isImageFavorite });
+
+  useEffect(() => {
+    if (!imageUrl) getRandom();
+  }, [getRandom, imageUrl]);
+
+  const handleAddToFavorites = () => {
+    if (imageUrl) addToFavorites(imageUrl);
   };
+
+  if (error)
+    return (
+      <div className="row">
+        <div className="col-sm-12 d-flex justify-content-center">
+          <div className="mb-3 mt-3">
+            <div className="d-flex flex-column align-items-center alert alert-danger">
+              <h5>Error loading image</h5>
+              <p>{error}</p>
+              <button className="btn btn-primary" onClick={() => getRandom()}>
+                Try again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="row">
@@ -45,7 +59,7 @@ const RandomImage = ({
             <div className="card-body d-flex justify-content-center align-items-center p-0">
               <img
                 src={imageUrl}
-                alt={imageUrl}
+                alt={`Random dog ${imageUrl}`}
                 className="w-100 h-100 img-fluid rounded mx-auto d-block"
               />
               {breedName && (
@@ -60,14 +74,15 @@ const RandomImage = ({
               className="btn btn-primary btn-lg"
               onClick={() => getRandom()}
             >
-              Random!
+              {isLoading ? 'Loading...' : 'Random!'}
             </button>
             <button
               type="button"
               className="btn btn-primary rounded-circle ml-auto"
-              onClick={addToFavourites}
+              onClick={handleAddToFavorites}
+              disabled={!imageUrl || isLoading}
             >
-              <i className={`fa${like ? 's' : 'r'} fa-heart`}></i>
+              <i className={`fa${isImageFavorite ? 's' : 'r'} fa-heart`}></i>
             </button>
           </div>
         </div>

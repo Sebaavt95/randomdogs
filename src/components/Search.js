@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useAppContext } from '../context/AppContext';
 import Select from './Select';
-import { getAllBreeds } from '../api';
 
-const Search = ({ getRandom, isSearch, setIsSearch }) => {
-  const [breeds, setBreeds] = useState([]);
+const Search = () => {
   const [selectedBreed, setSelectedBreed] = useState({});
   const [isError, setIsError] = useState(false);
   const [formData, setFormData] = useState({
@@ -12,14 +11,13 @@ const Search = ({ getRandom, isSearch, setIsSearch }) => {
     subBreed: '',
   });
 
-  const loadBreeds = async () => {
-    const allBreeds = await getAllBreeds();
-    setBreeds(allBreeds);
-  };
-
-  useEffect(() => {
-    loadBreeds();
-  }, []);
+  const {
+    breeds,
+    getRandom,
+    isSearch,
+    setIsSearch,
+    isLoading: breedsLoading,
+  } = useAppContext();
 
   const handleOnSubmit = async e => {
     e.preventDefault();
@@ -28,23 +26,20 @@ const Search = ({ getRandom, isSearch, setIsSearch }) => {
 
     const hasSubBreeds = selectedBreed?.subBreeds?.length;
 
-    if (!breed || (hasSubBreeds && !subBreed)) {
-      setIsError(true);
-      return;
-    }
+    if (!breed || (hasSubBreeds && !subBreed)) return setIsError(true);
 
-    const finalBreed = `${breed}${subBreed ? `/${subBreed}` : ''}`;
-    getRandom(finalBreed);
+    getRandom(`${breed}${subBreed ? `/${subBreed}` : ''}`);
     setIsError(false);
   };
 
   const handleSelectBreed = value => {
     setIsSearch(false);
     const breed = breeds.find(breed => breed.label === value);
-    setSelectedBreed(breed);
+    setSelectedBreed(breed || {});
     setFormData({
       ...formData,
-      breed: breed.name,
+      breed: breed?.name || '',
+      subBreed: '',
     });
   };
 
@@ -55,9 +50,20 @@ const Search = ({ getRandom, isSearch, setIsSearch }) => {
     );
     setFormData({
       ...formData,
-      subBreed: subBreed.name,
+      subBreed: subBreed?.name || '',
     });
   };
+
+  if (breedsLoading)
+    return (
+      <div className="row mb-4 alert">
+        <div className="col-sm-12">
+          <div className="text-center">
+            <p>Loading breeds...</p>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="row mb-4">
@@ -76,6 +82,10 @@ const Search = ({ getRandom, isSearch, setIsSearch }) => {
                   <Select
                     options={breeds.map(breed => breed.label)}
                     handleSetValue={handleSelectBreed}
+                    value={
+                      breeds.find(breed => breed?.name === formData?.breed)
+                        ?.label || ''
+                    }
                   />
                   {selectedBreed?.subBreeds?.length && (
                     <Select
@@ -83,12 +93,18 @@ const Search = ({ getRandom, isSearch, setIsSearch }) => {
                         subBreed => subBreed.label
                       )}
                       handleSetValue={handleSelectSubBreed}
+                      value={
+                        selectedBreed?.subBreeds.find(
+                          subBreed => subBreed?.name === formData?.subBreed
+                        )?.label || ''
+                      }
                     />
                   )}
                   <div className="col-sm-12 col-md-3 text-center">
                     <button
                       type="submit"
                       className="btn btn-primary float-md-left"
+                      disabled={breedsLoading}
                     >
                       {isSearch
                         ? `Random! por ${selectedBreed.label} ${formData.subBreed}`
