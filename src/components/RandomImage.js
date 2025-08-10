@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useAppContext } from '../context/AppContext';
-import './RandomImage.css';
-import '../Spinner.css';
+import Spinner from './Spinner';
 
 const RandomImage = () => {
   const {
@@ -17,8 +16,6 @@ const RandomImage = () => {
 
   const isImageFavorite = isFavorite(imageUrl);
 
-  console.log({ isImageFavorite });
-
   useEffect(() => {
     if (!imageUrl) getRandom();
   }, [getRandom, imageUrl]);
@@ -29,60 +26,80 @@ const RandomImage = () => {
 
   if (error)
     return (
-      <div className="row">
-        <div className="col-sm-12 d-flex justify-content-center">
-          <div className="mb-3 mt-3">
-            <div className="d-flex flex-column align-items-center alert alert-danger">
-              <h5>Error loading image</h5>
-              <p>{error}</p>
-              <button className="btn btn-primary" onClick={() => getRandom()}>
-                Try again
-              </button>
-            </div>
+      <div className="flex justify-center py-8 animate-fade-in">
+        <div className="alert alert-danger max-w-md w-full text-center">
+          <div className="flex items-center justify-center mb-3">
+            <i className="fas fa-exclamation-triangle text-2xl text-red-500"></i>
           </div>
+          <h3 className="text-lg font-semibold mb-2">
+            Error al cargar la imagen
+          </h3>
+          <p className="mb-4 text-sm">{error}</p>
+          <button className="btn-primary" onClick={() => getRandom()}>
+            <i className="fas fa-redo mr-2"></i>
+            Reintentar
+          </button>
         </div>
       </div>
     );
 
   return (
-    <div className="row">
-      <div className="col-sm-12 d-flex justify-content-center align-items-center">
-        <div className="card mb-3 mt-3">
+    <div className="flex justify-center py-8 animate-fade-in">
+      <div className="card w-full max-w-lg">
+        <div className="relative aspect-h-3 bg-gray-100">
           {isLoading ? (
-            <div className="d-flex justify-content-center h-100">
-              <div className="spinner">
-                <div className="double-bounce1"></div>
-                <div className="double-bounce2"></div>
-              </div>
+            <div className="flex items-center justify-center h-80">
+              <Spinner message="Cargando..." />
             </div>
           ) : (
-            <div className="card-body d-flex justify-content-center align-items-center p-0">
+            <>
               <img
                 src={imageUrl}
                 alt={`Random dog ${imageUrl}`}
-                className="w-100 h-100 img-fluid rounded mx-auto d-block"
+                className="w-full h-80 object-cover"
+                onError={() => getRandom()}
               />
               {breedName && (
-                <p className="m-0 lead position-absolute text-center w-100 text-white">
-                  {breedName}
+                <p className="absolute bottom-0 w-full bg-gradient-to-t from-black/70 to-transparent py-3">
+                  <p className="text-white font-semibold text-lg text-center">
+                    {breedName}
+                  </p>
                 </p>
               )}
-            </div>
+            </>
           )}
-          <div className="d-flex justify-content-center align-items-center p-3">
+        </div>
+
+        <div className="p-6">
+          <div className="flex items-center justify-between gap-4">
             <button
-              className="btn btn-primary btn-lg"
+              className="btn-primary flex-1 flex items-center justify-center gap-2 py-3"
               onClick={() => getRandom()}
+              disabled={isLoading}
             >
+              <i className="fas fa-random"></i>
               {isLoading ? 'Loading...' : 'Random!'}
             </button>
             <button
               type="button"
-              className="btn btn-primary rounded-circle ml-auto"
+              className={`p-2.5 rounded-2xl transition-all duration-200 ${
+                isImageFavorite
+                  ? 'bg-pink-500 text-white shadow-lg hover:bg-pink-600'
+                  : 'bg-gray-200 text-gray-600 hover:bg-pink-100 hover:text-pink-500'
+              }`}
               onClick={handleAddToFavorites}
               disabled={!imageUrl || isLoading}
+              aria-label={
+                isImageFavorite
+                  ? 'Eliminar de favoritos'
+                  : 'Agregar a favoritos'
+              }
             >
-              <i className={`fa${isImageFavorite ? 's' : 'r'} fa-heart`}></i>
+              <i
+                className={`fa fa-heart text-lg ${
+                  isImageFavorite ? 'animate-pulse' : ''
+                } w-6 h-1`}
+              ></i>
             </button>
           </div>
         </div>

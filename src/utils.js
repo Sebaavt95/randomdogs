@@ -7,8 +7,3 @@ export const getBreedName = url => {
   const breedName = name.includes('-') ? name.replace('-', ' ') : name;
   return uppercase(breedName);
 };
-
-export const removeNumbers = id => {
-  if (!id) return;
-  return id.replace(/[0-9]/gi, '');
-};

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useAppContext } from '../context/AppContext';
 import Select from './Select';
+import Spinner from './Spinner';
 
 const Search = () => {
   const [selectedBreed, setSelectedBreed] = useState({});
@@ -41,6 +42,7 @@ const Search = () => {
       breed: breed?.name || '',
       subBreed: '',
     });
+    setIsError(false);
   };
 
   const handleSelectSubBreed = value => {
@@ -52,69 +54,76 @@ const Search = () => {
       ...formData,
       subBreed: subBreed?.name || '',
     });
+    setIsError(false);
   };
 
   if (breedsLoading)
     return (
-      <div className="row mb-4 alert">
-        <div className="col-sm-12">
-          <div className="text-center">
-            <p>Loading breeds...</p>
-          </div>
-        </div>
+      <div className="py-8">
+        <Spinner size="sm" message="Cargando razas...." />
       </div>
     );
 
   return (
-    <div className="row mb-4">
-      <div className="col-sm-12">
-        <div className="row justify-content-center align-items-center">
-          <div className="col-sm-12">
-            <h3>Buscar por raza</h3>
-            {isError && (
-              <p className="alert alert-dismissible alert-danger m-0 mb-1 py-1 text-center">
+    <div className="py-8 animate-fade-in">
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="text-center mb-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center justify-center space-x-2">
+            <i className="fas fa-search text-purple-600 mr-2"></i>
+            Buscar por raza
+          </h3>
+          {isError && (
+            <div className="alert alert-danger mb-6 mx-auto max-w-md animate-slide-up p-2.5">
+              <div className="flex items-center space-x-2 justify-center">
+                <i className="fas fa-exclamation-triangle mr-2"></i>
                 Seleccion&aacute; una raza/subraza
-              </p>
-            )}
-            <div className="mb-2">
-              <form onSubmit={handleOnSubmit}>
-                <div className="form-row">
-                  <Select
-                    options={breeds.map(breed => breed.label)}
-                    handleSetValue={handleSelectBreed}
-                    value={
-                      breeds.find(breed => breed?.name === formData?.breed)
-                        ?.label || ''
-                    }
-                  />
-                  {selectedBreed?.subBreeds?.length && (
-                    <Select
-                      options={selectedBreed?.subBreeds.map(
-                        subBreed => subBreed.label
-                      )}
-                      handleSetValue={handleSelectSubBreed}
-                      value={
-                        selectedBreed?.subBreeds.find(
-                          subBreed => subBreed?.name === formData?.subBreed
-                        )?.label || ''
-                      }
-                    />
-                  )}
-                  <div className="col-sm-12 col-md-3 text-center">
-                    <button
-                      type="submit"
-                      className="btn btn-primary float-md-left"
-                      disabled={breedsLoading}
-                    >
-                      {isSearch
-                        ? `Random! por ${selectedBreed.label} ${formData.subBreed}`
-                        : 'Buscar'}
-                    </button>
-                  </div>
-                </div>
-              </form>
+              </div>
             </div>
-          </div>
+          )}
+          <form className="space-y-6" onSubmit={handleOnSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div className="space-y-2">
+                <Select
+                  options={breeds.map(breed => breed.label)}
+                  handleSetValue={handleSelectBreed}
+                  value={
+                    breeds.find(breed => breed?.name === formData?.breed)
+                      ?.label || ''
+                  }
+                />
+              </div>
+              {selectedBreed?.subBreeds?.length && (
+                <div className="space-y-2 animate-slide-up">
+                  <Select
+                    options={selectedBreed?.subBreeds.map(
+                      subBreed => subBreed.label
+                    )}
+                    handleSetValue={handleSelectSubBreed}
+                    value={
+                      selectedBreed?.subBreeds.find(
+                        subBreed => subBreed?.name === formData?.subBreed
+                      )?.label || ''
+                    }
+                    placeholder="- Seleccionar subraza -"
+                  />
+                </div>
+              )}
+              <div className="flex justify-center md:justify-start">
+                <button
+                  type="submit"
+                  className="btn-primary px-8 py-2 flex items-center justify-center space-x-2 min-w-[160px]"
+                  disabled={breedsLoading}
+                >
+                  <i
+                    className={`fas fa-${isSearch ? 'random' : 'search'} mr-2 `}
+                  ></i>
+                  {isSearch
+                    ? `Random! por ${selectedBreed.label} ${formData.subBreed}`
+                    : 'Buscar'}
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>

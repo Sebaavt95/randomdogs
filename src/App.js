@@ -9,20 +9,18 @@ const App = () => {
   return (
     <ErrorBoundary>
       <AppProvider>
-        <div className="main">
-          <div className="container">
-            <div className="row">
-              <Header />
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <Header />
+          <main className="pb-12">
             <RandomImage />
             <Search />
             <FavList />
-            <div className="row mt-4 d-flex justify-content-center">
-              <p className="text-muted m-0">
-                &copy; Desarrollado por Sebaavt95 | {new Date().getFullYear()}
-              </p>
-            </div>
-          </div>
+          </main>
+          <footer className="flex items-center justify-center border-t border-gray-200 bg-white/50 backdrop-blur-sm px-4 py-6">
+            <p className="text-sm text-gray-600">
+              &copy; Desarrollado por Sebaavt95 | {new Date().getFullYear()}
+            </p>
+          </footer>
         </div>
       </AppProvider>
     </ErrorBoundary>
