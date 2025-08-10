@@ -47,7 +47,7 @@ const RandomImage = () => {
     <div className="flex justify-center py-8 animate-fade-in">
       <div className="card w-full max-w-lg">
         <div className="relative aspect-h-3 bg-gray-100">
-          {!isLoading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center h-80">
               <Spinner />
             </div>
