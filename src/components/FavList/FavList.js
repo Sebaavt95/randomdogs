@@ -24,8 +24,8 @@ const FavList = () => {
               </h3>
               <p className="text-gray-600 text-sm mb-6">
                 Cuando encuentres una imagen que te guste, hacé clic en el
-                <i className="fas fa-heart text-purple-600"></i> para agregarla
-                acá.
+                <i className="fas fa-heart text-purple-600 mx-1"></i>para
+                agregarla acá.
               </p>
             </div>
           </div>

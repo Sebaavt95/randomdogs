@@ -57,12 +57,7 @@ const Search = () => {
     setIsError(false);
   };
 
-  if (breedsLoading)
-    return (
-      <div className="py-8">
-        <Spinner size="sm" message="Cargando razas...." />
-      </div>
-    );
+  if (breedsLoading) return <Spinner size="sm" message="Cargando razas...." />;
 
   return (
     <div className="py-8 animate-fade-in">
