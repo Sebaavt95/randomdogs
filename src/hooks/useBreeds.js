@@ -26,7 +26,7 @@ const useBreeds = () => {
 
   return {
     breeds,
-    isLoading,
+    isLoadingBreeds: isLoading,
     error,
   };
 };

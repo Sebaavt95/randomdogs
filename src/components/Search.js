@@ -12,13 +12,8 @@ const Search = () => {
     subBreed: '',
   });
 
-  const {
-    breeds,
-    getRandom,
-    isSearch,
-    setIsSearch,
-    isLoading: breedsLoading,
-  } = useAppContext();
+  const { breeds, getRandom, isSearch, setIsSearch, isLoadingBreeds } =
+    useAppContext();
 
   const handleOnSubmit = async e => {
     e.preventDefault();
@@ -57,7 +52,8 @@ const Search = () => {
     setIsError(false);
   };
 
-  if (breedsLoading) return <Spinner size="sm" message="Cargando razas...." />;
+  if (isLoadingBreeds)
+    return <Spinner size="sm" message="Cargando razas...." />;
 
   return (
     <div className="py-8 animate-fade-in">
@@ -107,7 +103,7 @@ const Search = () => {
                 <button
                   type="submit"
                   className="btn-primary px-8 py-2 flex items-center justify-center space-x-2 min-w-[160px]"
-                  disabled={breedsLoading}
+                  disabled={isLoadingBreeds}
                 >
                   <i
                     className={`fas fa-${isSearch ? 'random' : 'search'} mr-2 `}
