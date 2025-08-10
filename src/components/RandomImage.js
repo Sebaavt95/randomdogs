@@ -57,7 +57,6 @@ const RandomImage = () => {
                 src={imageUrl}
                 alt={`Random dog ${imageUrl}`}
                 className="w-full h-80 object-cover"
-                onError={() => getRandom()}
               />
               {breedName && (
                 <p className="absolute bottom-0 w-full bg-gradient-to-t from-black/70 to-transparent py-3">
