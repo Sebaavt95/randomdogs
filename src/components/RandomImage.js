@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useAppContext } from '../context/AppContext';
 import Spinner from './Spinner';
 
@@ -105,17 +104,6 @@ const RandomImage = () => {
       </div>
     </div>
   );
-};
-
-RandomImage.propTypes = {
-  imageUrl: PropTypes.string,
-  getRandom: PropTypes.func,
-  isLoading: PropTypes.bool,
-  breedName: PropTypes.string,
-  like: PropTypes.bool,
-  setLike: PropTypes.func,
-  favouriteImages: PropTypes.array,
-  setFavouriteImages: PropTypes.func,
 };
 
 export default RandomImage;
